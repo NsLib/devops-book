@@ -35,7 +35,7 @@
         * GCE
         * 阿里云
         * 腾讯云
-        * * 12-Factor
+        * 12-Factor
         * Reaction宣言
         * SDN
     - CICD
