@@ -6,8 +6,8 @@
 
 下面按照时间顺序，先列出权限系统发展历程中重要的模型：
 
-* DAC (Discretionary Access Control, 自主访问控制) 
-* MAC (Mandatory Access Control, 强制访问控制)
+* DAC (Discretionary Access Control, 自主访问控制) - 20世纪70年代初期
+* MAC (Mandatory Access Control, 强制访问控制) - 20世纪70年代初期
 * RBAC (Role-Based Access Control, 基于角色的访问控制)
 * ABAC (Attribute-Based Access Control, 基于属性的访问控制)
 
@@ -18,6 +18,7 @@
 ### RBAC (Role-Based Access Control, 基于角色的访问控制)
 
 ### ABAC (Attribute-Based Access Control, 基于属性的访问控制)
+
 
 ## 参考资料
 

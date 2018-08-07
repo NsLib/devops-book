@@ -9,6 +9,8 @@
 * 待整理
     * 服务树
     * [权限系统](./docs/IAM.md)
+    * 服务器实时监控
+    * [监控](./docs/monitoring.md)
     * CMDB
     * 审计日志
     * 排班管理
