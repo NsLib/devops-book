@@ -32,3 +32,5 @@ Open-Falcon是小米自研的一款监控系统，并与2015年5月宣布开源�
 
 * [Open-Falcon v0.2](http://book.open-falcon.org/zh_0_2/)
 * [Open-Falcon GitHub Org](https://github.com/open-falcon)
+* [Mt-Falcon——Open-Falcon在美团点评的应用与实践](https://tech.meituan.com/Mt_Falcon_Monitoring_System.html)
+* [基于Falcon的滴滴内部监控系统](https://mp.weixin.qq.com/s/t0LNdHQg7lv-_9nLlPHC5Q)
