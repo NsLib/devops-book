@@ -2,14 +2,16 @@
 
 ## 前言
 
-[序言](./README.md)
+[序言](README.md)
 
 ## 平台篇
 
+
+* [监控告警](docs/monitoring/index.md)
+    * [Open-Falcon](docs/monitoring/open-falcon.md)
 * 待整理
     * 服务树
-    * [监控](./docs/monitoring/index.md)
-    * [权限系统](./docs/IAM.md)
+    * [权限系统](docs/IAM.md)
     * 服务器实时监控
     * CMDB
     * 审计日志
@@ -43,7 +45,6 @@
     * gocd
     * drone (个人没用过, 有兴趣研究)
     * strider (早期版本代码、安全性都不太好，待跟进)
-* 监控告警
 * 故障
     * 故障自愈 (StackStorm/st2 是个不错的思路)
 * 效率工具
