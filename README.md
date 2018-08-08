@@ -6,7 +6,7 @@
 
 [目录 (整理中, 调整幅度会很大)](./SUMMARY.md)
 
-<iframe src="/SUMMARY.md" width="700px" height="500px" frameborder="0" scrolling="no"> </iframe>
+<iframe src="https://github.com/NsLib/devops-book/blob/master/SUMMARY.md" width="700px" height="500px" frameborder="0" scrolling="no"> </iframe>
 
 ## 版权许可
 
