@@ -10,7 +10,7 @@
 
 * [监控告警](docs/monitoring/index.md)
     * [Open-Falcon](docs/monitoring/open-falcon.md)
-    * Open-Falcon源码剖析系列
+    * [Open-Falcon源码剖析01](docs/monitoring/open-falcon/open-falcon-source-01.md)
 
 ## 版权许可
 
