@@ -37,4 +37,5 @@ docker-compose up -d falcon-plus
 
 # 测试服务是否正常
 curl http://localhost:8080
+# Hello, I'm Falcon+ (｡A｡)
 ```
