@@ -22,8 +22,14 @@ cd $GOPATH/src/github.com/open-falcon/falcon-plus
 # 切换到我们测试用的分支
 git checkout -t origin/hacking
 
-# 首先在本地构建用于测试的镜像
-docker build -f Dockerfile.build-env -t local/open-falcon-hacking:latest .
+# 首先构建一个用于编译open-falcon的镜像, 后面我们测试过程中, 会反复使用, 一定要先配置好
+docker build -f Dockerfile.build-env -t local/open-falcon-build-env:latest .
+
+# 使用docker编译open-falcon, 构建结果会保存在宿主机的bin目录内, 后面docker compose编排时会被使用
+docker run -v $GOPATH:/go local/open-falcon-build-env:latest /bin/bash -c 'cd /go/src/github.com/open-falcon/falcon-plus && make -f Makefile.dev dev'
+
+# 构建一个用于docker-compose的镜像
+docker build -f Dockerfile.dev -t local/open-falcon-dev:latest .
 
 # 使用docker compose编排测试依赖
 cd docker
