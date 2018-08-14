@@ -34,4 +34,7 @@ docker build -f Dockerfile.dev -t local/open-falcon-dev:latest .
 # 使用docker compose编排测试依赖
 cd docker
 docker-compose up -d falcon-plus
+
+# 测试服务是否正常
+curl http://localhost:8080
 ```
