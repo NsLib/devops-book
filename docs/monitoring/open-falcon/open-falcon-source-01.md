@@ -82,3 +82,58 @@ curl http://localhost:8080
 ├── run.sh
 └── version.go
 ```
+
+## 剖析
+
+### Makefile
+
+限于篇幅原因，这里只挑选一些重点、难点进行讲解。
+
+```makefile
+CMD = agent aggregator graph hbs judge nodata transfer gateway api alarm
+TARGET = open-falcon
+
+all: $(CMD) $(TARGET)
+
+$(CMD):
+	go build -o bin/$@/falcon-$@ ./modules/$@
+
+.PHONY: $(TARGET)
+$(TARGET): $(GOFILES)
+	go build -ldflags "-X main.GitCommit=`git rev-parse --short HEAD` -X main.Version=$(VERSION)" -o open-falcon
+```
+
+
+```makefile
+$(CMD):
+	go build -o bin/$@/falcon-$@ ./modules/$@`
+```
+
+上述规则中, 有一个特殊的变量 `$@`, 其代表的是目标规则的名字, 当目标有多个的话, `$@` 代表的是触发规则的那个目标名称, 请看下面示例:
+
+```makefile
+# 此时, $@ = foo
+foo:
+	echo $@
+```
+
+```makefile
+CMD = a b c d e
+
+# 当执行 make b --always-make 时, $@ = b
+# 当执行 make c --always-make 时, $@ = c
+$(CMD):
+	echo $@
+```
+
+```makefile
+$(TARGET): $(GOFILES)
+	go build -ldflags "-X main.GitCommit=`git rev-parse --short HEAD` -X main.Version=$(VERSION)" -o open-falcon
+```
+
+上面的 `-X main.Version=$(VERSION)` 表示在编译期间, 设置 `package main` 中的 `Version` 变量, 这在 Go 语言的开发中是比较常见的一个技巧, 像版本信息这种信息, 不应该写死在代码里, 应该构建时注入进去, 以便与版本控制系统等集成。
+
+
+## 参考资料
+
+* [Automatic Variables](https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html)
