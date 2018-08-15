@@ -79,7 +79,6 @@ curl http://localhost:8080
 ├── Makefile
 ├── VERSION
 ├── main.go
-├── run.sh
 └── version.go
 ```
 
