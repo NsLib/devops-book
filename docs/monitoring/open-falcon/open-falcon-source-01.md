@@ -39,3 +39,46 @@ docker-compose up -d falcon-plus
 curl http://localhost:8080
 # Hello, I'm Falcon+ (｡A｡)
 ```
+
+## 项目结构
+
+```
+├── cmd                 // open-falcon程序的子命令
+├── common              // 不同module共享的工具、model等
+│   ├── backend_pool
+│   ├── db
+│   ├── model
+│   ├── proc
+│   ├── sdk
+│   └── utils
+├── config              // 配置文件例子
+├── docker              // 使用docker进行编排、开发
+│   └── config
+├── docs                // 文档(剖析过程中不关注)
+│   ├── _includes
+│   ├── _layouts
+│   ├── _posts
+│   └── doc
+├── g
+├── logos
+├── modules             // 子模块, 每个独立模块一个目录
+│   ├── agent
+│   ├── aggregator
+│   ├── alarm
+│   ├── api
+│   ├── gateway
+│   ├── graph
+│   ├── hbs
+│   ├── judge
+│   ├── nodata
+│   └── transfer
+├── scripts
+│   └── mysql           // 存放数据库建表语句等信息
+├── test                // 没有测试, 忽略...
+├── vagrant 
+├── Makefile
+├── VERSION
+├── main.go
+├── run.sh
+└── version.go
+```
