@@ -506,6 +506,32 @@ falcon-aggregator         UP           53038
 }
 ```
 
+### open-falcon monitor
+
+```go
+func monitor(c *cobra.Command, args []string) error {
+	if len(args) < 1 {
+		return c.Usage()
+	}
+	var tailArgs []string = []string{"-f"}
+	for _, moduleName := range args {
+		// 判断模块是否存在 & 是否有日志文件
+		if err := checkMonReq(moduleName); err != nil {
+			return err
+		}
+
+		tailArgs = append(tailArgs, g.LogPath(moduleName))
+	}
+	// ./open-falcon monitor agent graph
+	// 相当于执行:
+	// tail -f <agent_log_path> <graph_log_path>
+	cmd := exec.Command("tail", tailArgs...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
+}
+```
+
 ## 参考资料
 
 * [Automatic Variables](https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html)
