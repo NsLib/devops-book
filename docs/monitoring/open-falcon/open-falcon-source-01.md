@@ -354,27 +354,6 @@ func start(c *cobra.Command, args []string) error {
 ```go
 package cmd
 
-import (
-	"fmt"
-	"os"
-	"os/exec"
-	"strings"
-
-	"github.com/open-falcon/falcon-plus/g"
-	"github.com/spf13/cobra"
-)
-
-var Stop = &cobra.Command{
-	Use:   "stop [Module ...]",
-	Short: "Stop Open-Falcon modules",
-	Long: `
-Stop the specified Open-Falcon modules.
-A module represents a single node in a cluster.
-Modules:
-  ` + "all " + strings.Join(g.AllModulesInOrder, " "),
-	RunE: stop,
-}
-
 func stop(c *cobra.Command, args []string) error {
 	args = g.RmDup(args)
 
@@ -449,6 +428,37 @@ func Pid(name string) string {
 		setPid(name)
 	}
 	return PidOf[name]
+}
+```
+
+### open-falcon restart
+
+```go
+func restart(c *cobra.Command, args []string) error {
+	args = g.RmDup(args)
+
+	if len(args) == 0 {
+		args = g.AllModulesInOrder
+	}
+
+	// open-falcon restart agent
+	// 相当于执行:
+	//		open-falcon stop agent
+	//		open-falcon start agent
+	for _, moduleName := range args {
+		if err := stop(c, []string{moduleName}); err != nil {
+			return err
+		}
+		if strings.Contains(moduleName, "graph") {
+			time.Sleep(2 * time.Second)
+		} else {
+			time.Sleep(1 * time.Second)
+		}
+		if err := start(c, []string{moduleName}); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 ```
 
