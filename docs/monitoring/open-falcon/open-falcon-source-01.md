@@ -349,6 +349,110 @@ func start(c *cobra.Command, args []string) error {
 }
 ```
 
+### open-falcon stop
+
+```go
+package cmd
+
+import (
+	"fmt"
+	"os"
+	"os/exec"
+	"strings"
+
+	"github.com/open-falcon/falcon-plus/g"
+	"github.com/spf13/cobra"
+)
+
+var Stop = &cobra.Command{
+	Use:   "stop [Module ...]",
+	Short: "Stop Open-Falcon modules",
+	Long: `
+Stop the specified Open-Falcon modules.
+A module represents a single node in a cluster.
+Modules:
+  ` + "all " + strings.Join(g.AllModulesInOrder, " "),
+	RunE: stop,
+}
+
+func stop(c *cobra.Command, args []string) error {
+	args = g.RmDup(args)
+
+	if len(args) == 0 {
+		args = g.AllModulesInOrder
+	}
+
+	for _, moduleName := range args {
+		// 检测模块是否存在
+		if !g.HasModule(moduleName) {
+			return fmt.Errorf("%s doesn't exist", moduleName)
+		}
+
+		// 模块没有运行则打印信息并跳过
+		if !g.IsRunning(moduleName) {
+			fmt.Print("[", g.ModuleApps[moduleName], "] down\n")
+			continue
+		}
+
+		// 以 `open-falcon stop agent` 来举例:
+		// 		kill -TERM <从pid文件中读取的模块pid>
+		cmd := exec.Command("kill", "-TERM", g.Pid(moduleName))
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		err := cmd.Run()
+		if err == nil {
+			fmt.Print("[", g.ModuleApps[moduleName], "] down\n")
+			continue
+		}
+		return err
+	}
+	return nil
+}
+```
+
+```go
+cmd := exec.Command("kill", "-TERM", g.Pid(moduleName))
+```
+
+上述代码中的 `g.Pid(moduleName)` 需要解释下, 请直接看下面带注释的实现:
+
+```go
+var PidOf map[string]string
+
+var (
+	PidOf = map[string]string{
+		"agent":      "<NOT SET>",
+		"aggregator": "<NOT SET>",
+		"graph":      "<NOT SET>",
+		"hbs":        "<NOT SET>",
+		"judge":      "<NOT SET>",
+		"nodata":     "<NOT SET>",
+		"transfer":   "<NOT SET>",
+		"gateway":    "<NOT SET>",
+		"api":        "<NOT SET>",
+		"alarm":      "<NOT SET>",
+	}
+)
+
+func setPid(name string) {
+	// 使用 `pgrep -f falcon-agent` 来获取进程pid
+	// PS: 这里应该判断进程没有运行的情况, 以及同名程序的情况
+	output, _ := exec.Command("pgrep", "-f", ModuleApps[name]).Output()
+	pidStr := strings.TrimSpace(string(output))
+	PidOf[name] = pidStr
+}
+
+func Pid(name string) string {
+	// 模块pid没有被设置的话, 检查当前运行的进程中是否有对应模块, 并写入pid文件
+	// PS: 其实返回值应该是 （string, error) 形式, 这个实现不严谨, 异常情况下报错会让用户看不懂
+	if PidOf[name] == "<NOT SET>" {
+		setPid(name)
+	}
+	return PidOf[name]
+}
+```
+
+
 ## 参考资料
 
 * [Automatic Variables](https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html)
