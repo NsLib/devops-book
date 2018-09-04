@@ -84,6 +84,8 @@ func main() {
 }
 ```
 
+上面的这些goroutine, 基本上都是无限的for循环+sleep, 后面会一一进行分析.
+
 ### HTTP接口
 
 ```go
@@ -114,13 +116,14 @@ func Workdir(c *gin.Context) {
 * `/health`: 健康检查, 用于检测alarm agent是否存活
 * `/workdir`: 获取alarm agent路径
 
-###
+### 高优先级报警事件处理
 
 ```go
 go cron.ReadHighEvent()
 ```
 
 ```go
+// 轮询+sleep
 func ReadHighEvent() {
 	for {
 		event, err := popEvent(queues)
@@ -180,3 +183,7 @@ func consumeHighEvents(event *cmodel.Event, action *api.Action) {
 	redi.WriteMail(mails, smsContent, mailContent)
 }
 ```
+
+### 低优先级报警事件处理
+
+低优先级报警事件处理逻辑与高优先级报警事件处理逻辑相似度90%以上, 请自行阅读源码
