@@ -83,3 +83,100 @@ func main() {
 	select {}
 }
 ```
+
+### HTTP接口
+
+```go
+func Start() {
+	r := gin.Default()
+	r.GET("/version", Version)
+	r.GET("/health", Health)
+	r.GET("/workdir", Workdir)
+	r.Run(addr)
+}
+```
+
+```go
+func Version(c *gin.Context) {
+	c.String(200, g.VERSION)
+}
+
+func Health(c *gin.Context) {
+	c.String(200, "ok")
+}
+
+func Workdir(c *gin.Context) {
+	c.String(200, file.SelfDir())
+}
+```
+
+* `/version`: 获取alarm agent版本信息
+* `/health`: 健康检查, 用于检测alarm agent是否存活
+* `/workdir`: 获取alarm agent路径
+
+###
+
+```go
+go cron.ReadHighEvent()
+```
+
+```go
+func ReadHighEvent() {
+	for {
+		event, err := popEvent(queues)
+		if err != nil {
+			time.Sleep(time.Second)
+			continue
+		}
+		consume(event, true)
+	}
+}
+
+func consume(event *cmodel.Event, isHigh bool) {
+	actionId := event.ActionId()
+	if actionId <= 0 {
+		return
+	}
+
+	action := api.GetAction(actionId)
+	if action == nil {
+		return
+	}
+
+	// 报警HTTP回调接口
+	if action.Callback == 1 {
+		HandleCallback(event, action)
+	}
+
+	// 高优先级和低优先级分开处理, 防止低优先级报警堆积, 进而影响高优先级报警
+	if isHigh {
+		consumeHighEvents(event, action)
+	} else {
+		consumeLowEvents(event, action)
+	}
+}
+
+// 高优先级的不做报警合并
+func consumeHighEvents(event *cmodel.Event, action *api.Action) {
+	if action.Uic == "" {
+		return
+	}
+
+	// 获取报警联系人相关信息
+	phones, mails, ims := api.ParseTeams(action.Uic)
+
+	// 生成报警内容
+	smsContent := GenerateSmsContent(event)
+	mailContent := GenerateMailContent(event)
+	imContent := GenerateIMContent(event)
+
+	// <=P2 才发送短信
+	if event.Priority() < 3 {
+		redi.WriteSms(phones, smsContent)
+	}
+
+	// 这里将报警信息写入redis中, 发送逻辑在 cron.ConsumeIM() / cron.ConsumeSms() / cron.ConsumeMail()
+	redi.WriteIM(ims, imContent)
+	redi.WriteMail(mails, smsContent, mailContent)
+}
+```
